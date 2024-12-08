@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head></head>
+<body>
+    <h1>113306037_HW6_1A2B</h1>
+
+    <input type="text" placeholder="請輸入4個不重複的數字" id= 'userInput'>
+    <button onclick="checkAnswer()">猜!</button>
+    <p id="result"></p>
+    <div>
+        <h2>遊戲紀錄:</h2>
+        <table id="history"></table>
+    </div>
+
+    <script>
+        /*  const 不能重新賦值，只在{}內有效(像java local variable)
+            let 可以重新賦值、不可重新聲明，只在{}內有效
+            var 可以重新賦值、重新聲明，在{}外也有效(像java global variable)
+        */
+        function generateAns(){ //function 像java的method()
+            const answer = [];
+            while(answer.length < 4){
+                const num = Math.floor(Math.random()*10); //Math.random()是產生0(包含)~1(不包含)隨機小數
+                if(!answer.includes(num)){  //讓答案數字不會重複
+                    answer.push(num);
+                }
+            }
+            return answer;
+        }
+
+        const answer = generateAns();
+
+        function isValidInput(input){
+            if(input.length!==4){
+                alert("要輸入4個數字!");
+                return false; //return false > 條件沒被滿足，停止進入後續程式
+            }
+            const digits = input.split(""); //將input拆成一個個數字，才能比較有沒有重複
+            for(let i = 0; i<digits.length-1; i++){
+                for(let j=i+1; j<digits.length; j++){
+                    if(digits[i]===digits[j]){ //記得一個"="是賦值
+                        alert("不能輸入重複的數字!");
+                        return false; 
+                    }
+                }
+            }
+            return true;
+        }
+
+        function getResult(input,answer){
+            let A=0, B=0;
+            const digits = Array.from(input,Number); //把input(字串)分解放入Array(["1","2","3","4"])，再將它們轉為Number型態
+            for(let i=0; i<digits.length; i++){
+                if(digits[i]===answer[i]){
+                    A++;
+                } else if(answer.includes(digits[i])){
+                    B++;
+                }
+            }
+            return {A,B}; //用{} 可以同時return A和B (= return A; + return B;)
+        }
+
+        let attempts=0;
+        function checkAnswer(){
+            const userInput=document.getElementById("userInput").value;
+            if (!isValidInput(userInput)){
+                return false;
+            } 
+            attempts++;
+            const{A,B} = getResult(userInput,answer);
+            const result=A+"A"+B+"B";
+
+            const history = document.getElementById("history"); //拿碗
+            const row = document.createElement("tr"); //建新的食物
+            row.innerHTML = "<td>第" + attempts + "次:</td><td>" + userInput + "</td><td>" + result + "</td>"; //食物內容
+            history.appendChild(row); //食物放進碗裡(不影響舊的食物)
+            //若不用建新食物的方式，直接用history.innerHTML，舊的東西會被覆蓋
+
+            if(A===4){
+                alert("猜對了! \n 共猜了 "+attempts+" 次");
+                document.getElementById("userInput").value="";
+            }
+        }
+
+    </script>
+    
+
+</body>
+</html>
